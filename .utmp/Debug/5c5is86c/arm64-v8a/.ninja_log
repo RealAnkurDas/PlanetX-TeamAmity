@@ -1,0 +1,10 @@
+# ninja log v5
+74	2075	7841636972484941	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	98627196523b2e63
+8	2083	7841636972543198	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	4842134d597d601e
+83	2085	7841636972627886	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	1f943bfb251dd1aa
+101	2087	7841636972739883	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	9035f80c6cdcf181
+16	2094	7841636972796177	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	bc6c16e41098194e
+92	2299	7841636973647640	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	62cc07961ecacab9
+1	2324	7841636975036890	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	1e4d108e2c8b4577
+109	2329	7841636975128613	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	b6ab11b8854b2edf
+2330	2482	7841636976708337	C:/Users/ankur/Planet X - AR/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/5c5is86c/obj/arm64-v8a/libgame.so	27e579e9153f7729

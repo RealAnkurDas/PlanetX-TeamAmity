@@ -1,0 +1,66 @@
+Ephemeris File:
+Skyfield - Table of Contents — Skyfield documentation
+
+The RA and Dec are not constant and it is constantly changing. It depends on the chosen celestial body, the current Earth time, the latitude and longitude of the observer on Earth.
+For this we use the Ephemeris file - precise positions and motions of astronomical objects—like planets, moons, and spacecraft—over time.
+🪐 What It Contains
+Ephemeris files typically include:
+Time-stamped coordinates of celestial bodies
+Orbital parameters and velocities
+Reference frames (e.g. barycentric or heliocentric)
+Segments linking objects (e.g. Earth → Moon)
+These files are essential for:
+Astronomical calculations
+Space mission planning
+Telescope orientation and tracking
+Simulations and modeling in software like Skyfield or SPICE
+📁 Common Formats
+.bsp (Binary SPICE): Used by NASA’s JPL, highly accurate and compact
+ASCII tables: Simpler, human-readable but less efficient
+Type 1 / Type 21 SPK formats: Specialized formats for certain missions or bodies
+Planets and their moons: JPL ephemeris files — Skyfield documentation
+
+
+⚖️ What Is a Barycenter?
+The barycenter is the center of mass of two or more bodies that orbit each other. It’s the point around which all bodies in a system move due to their mutual gravitational pull. It’s not a physical object, but a dynamically calculated point.
+🧠 Conceptual Analogy
+Think of two people on a seesaw:
+If they have equal mass, the pivot (barycenter) is in the middle.
+If one is heavier, the pivot shifts toward the heavier person.
+Listing the targets that an ephemeris supports¶
+You can use print() to check whether an ephemeris lists a specific planet or moon. Here, for example, are the targets supported by DE421:
+print(planets)
+
+SPICE kernel file 'de421.bsp' has 15 segments
+  JD 2414864.50 - JD 2471184.50  (1899-07-28 through 2053-10-08)
+      0 -> 1    SOLAR SYSTEM BARYCENTER -> MERCURY BARYCENTER
+      0 -> 2    SOLAR SYSTEM BARYCENTER -> VENUS BARYCENTER
+      0 -> 3    SOLAR SYSTEM BARYCENTER -> EARTH BARYCENTER
+      0 -> 4    SOLAR SYSTEM BARYCENTER -> MARS BARYCENTER
+      0 -> 5    SOLAR SYSTEM BARYCENTER -> JUPITER BARYCENTER
+      0 -> 6    SOLAR SYSTEM BARYCENTER -> SATURN BARYCENTER
+      0 -> 7    SOLAR SYSTEM BARYCENTER -> URANUS BARYCENTER
+      0 -> 8    SOLAR SYSTEM BARYCENTER -> NEPTUNE BARYCENTER
+      0 -> 9    SOLAR SYSTEM BARYCENTER -> PLUTO BARYCENTER
+      0 -> 10   SOLAR SYSTEM BARYCENTER -> SUN
+      3 -> 301  EARTH BARYCENTER -> MOON
+      3 -> 399  EARTH BARYCENTER -> EARTH
+      1 -> 199  MERCURY BARYCENTER -> MERCURY
+      2 -> 299  VENUS BARYCENTER -> VENUS
+      4 -> 499  MARS BARYCENTER -> MARS
+
+Skyfield can generate positions for any body that an ephemeris links to target zero, the Solar System barycenter. For example, DE421 — as you can see above — provides a segment directly linking the Solar System barycenter with the Sun:
+sun = planets['Sun']
+print(sun)
+
+'de421.bsp' segment 0 SOLAR SYSTEM BARYCENTER -> 10 SUN
+
+By contrast, generating a position for the Moon with DE421 requires Skyfield to add together two segments behind the scenes. The first segment provides the position of the Earth-Moon center of gravity, while the second segment provides the offset from there to the Moon.
+moon = planets['Moon']
+print(moon)
+
+Sum of 2 vectors:
+ 'de421.bsp' segment 0 SOLAR SYSTEM BARYCENTER -> 3 EARTH BARYCENTER
+ 'de421.bsp' segment 3 EARTH BARYCENTER -> 301 MOON
+
+Note that most planets are so massive compared to their moons that you can ignore the difference between the planet and its system barycenter. If you want to observe Mars or Jupiter from elsewhere in the Solar System, just ask for the Mars Barycenter or Jupiter Barycenter position instead. The Earth-Moon system is unusual for featuring a satellite with so much mass — though even in that case, their common barycenter is always inside the Earth. Only Pluto has a satellite so massive and so distant that the Pluto-Charon barycenter is in space between them.
