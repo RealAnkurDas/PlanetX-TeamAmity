@@ -17,6 +17,7 @@ Assets/PlanetXNative/.idea/
 Assets/PlanetXNative/local.properties
 Assets/PlanetXNative/**/*.apk
 Assets/PlanetXNative/**/*.aab
+Assets/PlanetXNative/app/src/main/res/**/*.meta
 
 # Unity Asset Store tools
 AssetStoreTools*
