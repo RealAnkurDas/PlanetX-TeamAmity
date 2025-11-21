@@ -346,9 +346,13 @@ public class SimulationTimeTracker : MonoBehaviour
     {
         if (!isTracking) return;
         
+        // Calculate scale factor based on screen height (reference: 800 for mobile portrait)
+        // This makes UI look good on most phones and scales proportionally
+        float scale = Screen.height / 800f;
+        
         // Style for date and time display
         GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.fontSize = 18;
+        style.fontSize = Mathf.RoundToInt(18 * scale);
         style.fontStyle = FontStyle.Bold;
         style.normal.textColor = Color.white;
         style.alignment = TextAnchor.MiddleCenter;
@@ -362,7 +366,7 @@ public class SimulationTimeTracker : MonoBehaviour
         
         // Position at bottom center of screen
         float xPosition = (Screen.width - textSize.x) / 2f;
-        float yPosition = Screen.height - textSize.y - 30f; // 30px from bottom
+        float yPosition = Screen.height - textSize.y - (30f * scale); // Scale the offset
         
         // Draw the label
         GUI.Label(new Rect(xPosition, yPosition, textSize.x, textSize.y), displayText, style);

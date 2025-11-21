@@ -42,14 +42,27 @@ public class PlanetSelector : MonoBehaviour
         new PlanetZoomSetting { planetName = "Ousha", zoomDistance = 0.015f, fieldOfView = -1f },
         new PlanetZoomSetting { planetName = "Ghaf", zoomDistance = 0.015f, fieldOfView = -1f },
         new PlanetZoomSetting { planetName = "Justitia", zoomDistance = 0.015f, fieldOfView = -1f },
-        new PlanetZoomSetting { planetName = "MBR Explorer", zoomDistance = 0.005f, fieldOfView = 20f }
+        new PlanetZoomSetting { planetName = "MBR Explorer", zoomDistance = 0.005f, fieldOfView = 105f }
     };
     
     private string currentAnchor = "Sun";
     private bool isDropdownOpen = false;
+    private bool isARMode = false;
     
     void Start()
     {
+        // Check if in AR mode
+        isARMode = (FindFirstObjectByType<Unity.XR.CoreUtils.XROrigin>() != null);
+        
+        if (isARMode)
+        {
+            Debug.Log("PlanetSelector: AR Mode detected - Dropdown UI will be hidden");
+        }
+        else
+        {
+            Debug.Log("PlanetSelector: Regular mode - Dropdown UI enabled");
+        }
+        
         // Auto-find camera controller if not assigned
         if (cameraController == null)
         {
@@ -60,27 +73,53 @@ public class PlanetSelector : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("PlanetSelector: Could not find TouchCameraController!");
+                if (!isARMode)
+                {
+                    Debug.LogWarning("PlanetSelector: Could not find TouchCameraController!");
+                }
+            }
+        }
+        
+        // Set initial minimum zoom distance for default anchor (Sun)
+        if (cameraController != null)
+        {
+            PlanetZoomSetting initialSetting = GetSettingForPlanet(currentAnchor);
+            if (initialSetting != null)
+            {
+                cameraController.SetMinimumZoomDistance(initialSetting.zoomDistance);
+                Debug.Log($"PlanetSelector: Set initial min zoom for {currentAnchor} to {initialSetting.zoomDistance}");
             }
         }
     }
     
     void OnGUI()
     {
+        // Hide dropdown UI in AR mode
+        if (isARMode)
+        {
+            return;
+        }
+        
+        // Calculate scale factor based on screen height (reference: 800 for mobile portrait)
+        // This makes UI look good on most phones and scales proportionally
+        float scale = Screen.height / 800f;
+        
         // Dropdown button style
         GUIStyle dropdownButtonStyle = new GUIStyle(GUI.skin.button);
-        dropdownButtonStyle.fontSize = 12;
+        dropdownButtonStyle.fontSize = Mathf.RoundToInt(16 * scale); // Increased from 12
         dropdownButtonStyle.fontStyle = FontStyle.Bold;
         dropdownButtonStyle.alignment = TextAnchor.MiddleLeft;
         dropdownButtonStyle.normal.textColor = Color.cyan;
         
-        float buttonWidth = 100f;
-        float buttonHeight = 25f;
+        float buttonWidth = 140f * scale; // Increased from 100
+        float buttonHeight = 35f * scale; // Increased from 25
+        float scaledLeftOffset = menuLeftOffset * scale;
+        float scaledTopOffset = menuTopOffset * scale;
         
         // Draw the dropdown toggle button showing current anchor
         string dropdownText = isDropdownOpen ? $"▼ {currentAnchor}" : $"▶ {currentAnchor}";
         
-        if (GUI.Button(new Rect(menuLeftOffset, menuTopOffset, buttonWidth, buttonHeight), dropdownText, dropdownButtonStyle))
+        if (GUI.Button(new Rect(scaledLeftOffset, scaledTopOffset, buttonWidth, buttonHeight), dropdownText, dropdownButtonStyle))
         {
             // Toggle dropdown open/close
             isDropdownOpen = !isDropdownOpen;
@@ -91,14 +130,14 @@ public class PlanetSelector : MonoBehaviour
         {
             // Style for planet option buttons
             GUIStyle optionStyle = new GUIStyle(GUI.skin.button);
-            optionStyle.fontSize = 11;
+            optionStyle.fontSize = Mathf.RoundToInt(14 * scale); // Increased from 11
             optionStyle.fontStyle = FontStyle.Normal;
             optionStyle.alignment = TextAnchor.MiddleLeft;
             optionStyle.normal.textColor = Color.white;
             optionStyle.hover.textColor = Color.yellow;
             
-            float yPosition = menuTopOffset + buttonHeight + 2f;
-            float optionHeight = 20f;
+            float yPosition = scaledTopOffset + buttonHeight + (2f * scale);
+            float optionHeight = 28f * scale; // Increased from 20
             float optionWidth = buttonWidth;
             
             // Draw planet option buttons from zoom settings
@@ -107,19 +146,32 @@ public class PlanetSelector : MonoBehaviour
                 // Skip the current anchor (it's already shown in main button)
                 if (setting.planetName == currentAnchor) continue;
                 
-                if (GUI.Button(new Rect(menuLeftOffset, yPosition, optionWidth, optionHeight), setting.planetName, optionStyle))
+                if (GUI.Button(new Rect(scaledLeftOffset, yPosition, optionWidth, optionHeight), setting.planetName, optionStyle))
                 {
                     SetCameraAnchor(setting.planetName);
                     isDropdownOpen = false; // Close dropdown after selection
                 }
                 
-                yPosition += optionHeight + 2f;
+                yPosition += optionHeight + (2f * scale);
             }
         }
     }
     
     void SetCameraAnchor(string planetName)
     {
+        // Check if we're in AR mode (no TouchCameraController in AR)
+        bool isARMode = (cameraController == null);
+        
+        if (isARMode)
+        {
+            // AR mode: Just update the current anchor
+            // ARPlanetZoom script will detect the change and handle zooming
+            currentAnchor = planetName;
+            Debug.Log($"PlanetSelector (AR Mode): Selected '{planetName}' - ARPlanetZoom will handle zoom");
+            return;
+        }
+        
+        // Regular mode: Use TouchCameraController
         if (cameraController == null)
         {
             Debug.LogError("PlanetSelector: Camera controller not assigned!");
@@ -141,6 +193,10 @@ public class PlanetSelector : MonoBehaviour
             
             if (setting != null)
             {
+                // Set minimum zoom distance (prevents zooming past the target)
+                cameraController.SetMinimumZoomDistance(setting.zoomDistance);
+                
+                // Set zoom distance
                 cameraController.SetZoomDistance(setting.zoomDistance);
                 
                 // Set FOV if specified (not -1)
@@ -160,6 +216,7 @@ public class PlanetSelector : MonoBehaviour
             {
                 // Fallback: auto-calculate zoom
                 float zoomDistance = GetZoomDistanceForPlanet(planetName, planet);
+                cameraController.SetMinimumZoomDistance(zoomDistance);
                 cameraController.SetZoomDistance(zoomDistance);
                 cameraController.ResetFieldOfView();
                 Debug.Log($"PlanetSelector: Camera anchor changed to {planetName}, zoom: {zoomDistance}");

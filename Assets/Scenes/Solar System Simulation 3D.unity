@@ -7181,6 +7181,7 @@ GameObject:
   - component: {fileID: 1425434493}
   - component: {fileID: 1425434492}
   - component: {fileID: 1425434491}
+  - component: {fileID: 1425434494}
   m_Layer: 0
   m_Name: MBR explorer
   m_TagString: SmallBody
@@ -7453,6 +7454,23 @@ MonoBehaviour:
   velocityZ: 0.00003
   preset: 0
   debugMode: 1
+--- !u!114 &1425434494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1425434485}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0be80e8622609d4d92c97485765babf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MBRExplorerPositioner
+  trajectoryData: {fileID: 0}
+  currentMissionDay: 1
+  autoProgress: 1
+  timeScale: 60
+  showDebugInfo: 1
 --- !u!1 &1445009060
 GameObject:
   m_ObjectHideFlags: 0

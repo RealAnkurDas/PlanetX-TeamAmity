@@ -21,13 +21,11 @@ public class TimeStepSpeedController : MonoBehaviour
     [Header("Speed Presets")]
     [Tooltip("Timestep multipliers to cycle through (simulation seconds per real second)")]
     [SerializeField] private double[] timeStepPresets = {
-        1.0,          // Real-time (1 sec per sec)
-        3600.0,       // 1 hour per second
-        86400.0,      // 1 day per second
-        604800.0,     // 1 week per second
-        2592000.0,    // 1 month per second
-        7776000.0,    // 3 months per second (32x relative to 1 day/sec)
-        31536000.0    // 1 year per second
+        1.0,          // Real-time (1x)
+        2.0,          // 2x speed
+        4.0,          // 4x speed
+        8.0,          // 8x speed
+        16.0          // 16x speed (MAX)
     };
     
     private int currentSpeedIndex = 0;
@@ -84,7 +82,7 @@ public class TimeStepSpeedController : MonoBehaviour
     void UpdateSpeedLabel(double timeStep)
     {
         // Speed labels based on preset index
-        string[] speedLabels = { "", "2x", "4x", "8x", "16x", "32x", "64x" };
+        string[] speedLabels = { "1x", "2x", "4x", "8x", "16x" };
         
         // Get label for current index
         if (currentSpeedIndex < speedLabels.Length)
@@ -93,7 +91,7 @@ public class TimeStepSpeedController : MonoBehaviour
         }
         else
         {
-            currentSpeedLabel = "64x";
+            currentSpeedLabel = "16x";
         }
     }
     
@@ -102,9 +100,13 @@ public class TimeStepSpeedController : MonoBehaviour
         if (!showSpeedDisplay) return;
         if (string.IsNullOrEmpty(currentSpeedLabel)) return;
         
+        // Calculate scale factor based on screen height (reference: 800 for mobile portrait)
+        // This makes UI look good on most phones and scales proportionally
+        float scale = Screen.height / 800f;
+        
         // Style for speed display
         GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.fontSize = 24;
+        style.fontSize = Mathf.RoundToInt(24 * scale);
         style.fontStyle = FontStyle.Bold;
         style.normal.textColor = Color.white;
         style.alignment = TextAnchor.UpperRight;
@@ -113,8 +115,8 @@ public class TimeStepSpeedController : MonoBehaviour
         Vector2 textSize = style.CalcSize(new GUIContent(currentSpeedLabel));
         
         // Position at top-right corner
-        float xPosition = Screen.width - textSize.x - 20f;
-        float yPosition = 20f;
+        float xPosition = Screen.width - textSize.x - (20f * scale);
+        float yPosition = 20f * scale;
         
         // Draw the label
         GUI.Label(new Rect(xPosition, yPosition, textSize.x, textSize.y), currentSpeedLabel, style);

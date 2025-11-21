@@ -15,6 +15,8 @@ public class TimeSpeedController : MonoBehaviour
     [Tooltip("Show speed display on screen")]
     [SerializeField] private bool showSpeedDisplay = true;
     
+    private bool isARMode = false;
+    
     [Header("Speed Settings")]
     [Tooltip("G values to cycle through")]
     [SerializeField] private float[] gValues = { 2f, 4f, 8f, 16f, 32f };
@@ -25,6 +27,9 @@ public class TimeSpeedController : MonoBehaviour
     
     void Start()
     {
+        // Check if in AR mode
+        isARMode = (FindFirstObjectByType<Unity.XR.CoreUtils.XROrigin>() != null);
+        
         // Auto-find Orbit script if not assigned
         if (orbitScript == null)
         {
@@ -114,14 +119,21 @@ public class TimeSpeedController : MonoBehaviour
     /// </summary>
     void OnGUI()
     {
+        // Hide in AR mode for clean view
+        if (isARMode) return;
+        
         if (!showSpeedDisplay) return;
         
         // Only show if there's a label (not empty string)
         if (string.IsNullOrEmpty(currentSpeedLabel)) return;
         
+        // Calculate scale factor based on screen height (reference: 800 for mobile portrait)
+        // This makes UI look good on most phones and scales proportionally
+        float scale = Screen.height / 800f;
+        
         // Style for speed display
         GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.fontSize = 24;
+        style.fontSize = Mathf.RoundToInt(24 * scale);
         style.fontStyle = FontStyle.Bold;
         style.normal.textColor = Color.white;
         style.alignment = TextAnchor.UpperRight;
@@ -133,8 +145,8 @@ public class TimeSpeedController : MonoBehaviour
         Vector2 textSize = style.CalcSize(new GUIContent(displayText));
         
         // Position at top-right corner
-        float xPosition = Screen.width - textSize.x - 20f;
-        float yPosition = 20f;
+        float xPosition = Screen.width - textSize.x - (20f * scale);
+        float yPosition = 20f * scale;
         
         // Draw the label
         GUI.Label(new Rect(xPosition, yPosition, textSize.x, textSize.y), displayText, style);

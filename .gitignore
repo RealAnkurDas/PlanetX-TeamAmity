@@ -10,14 +10,18 @@
 # Unity exports
 UnityExports/
 
-# Android app build files (app is in Assets/)
-Assets/PlanetXNative/app/build/
-Assets/PlanetXNative/.gradle/
-Assets/PlanetXNative/.idea/
-Assets/PlanetXNative/local.properties
-Assets/PlanetXNative/**/*.apk
-Assets/PlanetXNative/**/*.aab
-Assets/PlanetXNative/app/src/main/res/**/*.meta
+# Android Studio / PlanetXNative build files
+PlanetXNative/app/build/
+PlanetXNative/build/
+PlanetXNative/.gradle/
+PlanetXNative/.idea/
+PlanetXNative/local.properties
+PlanetXNative/*.iml
+PlanetXNative/app/*.iml
+PlanetXNative/**/*.meta
+PlanetXNative/**/*.gdignore
+PlanetXNative/gradle/wrapper/gradle-wrapper.jar.meta
+PlanetXNative/gradle/wrapper/gradle-wrapper.properties.meta
 
 # Unity Asset Store tools
 AssetStoreTools*
@@ -100,4 +104,12 @@ Assets/Scripts/python/.myenv/
 
 # Python ephemeral storage (JPL ephemeris files)
 *.bsp
+
+# .NET build artifacts in Scripts folder
+Assets/Scripts/**/obj/
+Assets/Scripts/**/bin/
+**/obj/Debug/
+**/obj/Release/
+**/bin/Debug/
+**/bin/Release/
 

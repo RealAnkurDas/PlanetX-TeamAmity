@@ -522,6 +522,14 @@ public class EphemerisBasedSimulation : MonoBehaviour
     // ========== PUBLIC API ==========
     
     /// <summary>
+    /// Get current simulation speed multiplier
+    /// </summary>
+    public double GetTimeStepMultiplier()
+    {
+        return timeStepMultiplier;
+    }
+    
+    /// <summary>
     /// Set simulation speed multiplier (1 = real-time, higher = faster)
     /// </summary>
     public void SetTimeStepMultiplier(double multiplier)

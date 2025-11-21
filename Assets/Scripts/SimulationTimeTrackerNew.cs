@@ -18,6 +18,8 @@ public class SimulationTimeTrackerNew : MonoBehaviour
     [Tooltip("Show date/time display")]
     [SerializeField] private bool showDisplay = true;
     
+    private bool isARMode = false;
+    
     [Tooltip("Show timestep multiplier instead of G")]
     [SerializeField] private bool showTimeStep = true;
     
@@ -28,6 +30,9 @@ public class SimulationTimeTrackerNew : MonoBehaviour
     
     void Start()
     {
+        // Check if in AR mode
+        isARMode = (FindFirstObjectByType<Unity.XR.CoreUtils.XROrigin>() != null);
+        
         // Auto-find simulation if not assigned
         if (simulation == null)
         {
@@ -61,9 +66,13 @@ public class SimulationTimeTrackerNew : MonoBehaviour
     {
         if (!showDisplay || simulation == null) return;
         
+        // Calculate scale factor based on screen height (reference: 800 for mobile portrait)
+        // This makes UI look good on most phones and scales proportionally
+        float scale = Screen.height / 800f;
+        
         // Style for display
         GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.fontSize = 18;
+        style.fontSize = Mathf.RoundToInt(18 * scale);
         style.fontStyle = FontStyle.Bold;
         style.normal.textColor = Color.white;
         style.alignment = TextAnchor.MiddleCenter;
@@ -76,7 +85,7 @@ public class SimulationTimeTrackerNew : MonoBehaviour
         
         // Position at bottom center of screen (moved up from bottom)
         float xPosition = (Screen.width - textSize.x) / 2f;
-        float yPosition = Screen.height - textSize.y - 80f; // Moved up: 30 → 80
+        float yPosition = Screen.height - textSize.y - (80f * scale); // Scale the offset
         
         // Draw the label
         GUI.Label(new Rect(xPosition, yPosition, textSize.x, textSize.y), displayText, style);
