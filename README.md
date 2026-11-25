@@ -1,4 +1,4 @@
-# 🚀 Mission to Justitia - Unity + Android AR Project
+# 🚀 MBR++ - Unity + Android AR Project
 
 An integrated Unity AR and Android native app project for visualizing a space mission to asteroid 269 Justitia, featuring real-time planetary position calculations, AI-driven trajectory optimization using genetic algorithms, and immersive AR visualization.
 
